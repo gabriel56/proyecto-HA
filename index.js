@@ -1,4 +1,12 @@
+require('./config');
+//require('./login');
+require('./src/models/user');
+const express = require('express');
 const mongoose = require('mongoose');
+const app = express();
+
+
+
 mongoose.connect('mongodb://localhost/tweet');
 
 mongoose.connection
@@ -6,3 +14,6 @@ mongoose.connection
     .on('error', error => console.log(error));
 
 
+    app.listen(process.env.PORT, ()=> {
+        console.log('escuchando en puerto 3000');
+    });
