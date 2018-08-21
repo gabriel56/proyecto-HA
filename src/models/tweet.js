@@ -1,18 +1,13 @@
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Schema.Types.ObjectId;
+let Schema = mongoose.Schema;
 
-const express = require('express')
-
-const app = express()
-
-const TweetSchema = new mongoose.Schema({
+let tweetSchema = new mongoose.Schema({
     text: {
-        type: String, maxlenght = 280,  
+        type: String,   
     },
-        author: 'object id'
+    
+    author: ObjectId
 })
 
-const Tweet = mongoose.model('Tweet', TweetSchema);
-
-module.exports = {
-    Tweet:Tweet
-};
+module.exports = mongoose.model ('Tweet', tweetSchema);

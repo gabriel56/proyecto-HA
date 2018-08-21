@@ -1,21 +1,24 @@
-import { models } from "mongoose";
-
-const express = require('express');
+//import { models } from "mongoose";
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const Usuario = require('../models/tweet');
+const bodyParser = require('body-parser');
 
-const app = express()
+const Tweet = require('../../models/tweet');
+
+const jsonParser = bodyParser.json();
+
 
 module.exports = app => {
 
-app.get('/tweet', (req, res) => {
+app.get('/tweets',  (req, res) => {
 
     let desde = req.query.desde || 0;
         desde = Number(desde);
     let limite = req.query.limite || 5;
         limite = Number(limite);
-
+   
         Tweet.find({ })
+        .or([{ text: req.query.search },{ author: req.query.search} ])
         .skip(desde)
         .limit(limite)
         .exec( (err, tweets) => {
@@ -32,16 +35,30 @@ app.get('/tweet', (req, res) => {
         })
     });
 
-app.post('/tweet', (req, res) => {
+app.post('/tweets', jsonParser, (req, res) => {
 
     let body = req.body;
 
     let tweet = new Tweet({
         text: body.text
         })
+
+        tweet.save ((err, tweetDB) => {
+
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+            res.json({
+                ok: true,
+                tweet: tweetDB
+            });
+        });
     });
 
-app.put('/tweet/:id', function (req, res) {
+app.put('/tweets/:id', jsonParser, function (req, res) {
     let id = req.params.id;
     let body = req.body;
     
@@ -61,7 +78,7 @@ app.put('/tweet/:id', function (req, res) {
     });
 });
 
-app.delete('/usuario/:id', function (req, res) {
+app.delete('/tweets/:id', function (req, res) {
     
     let id = req.params.id;
 
